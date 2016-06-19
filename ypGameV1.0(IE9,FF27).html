@@ -1,0 +1,489 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ypGame</title>
+</head>
+<style>
+
+div{ position:absolute;}
+</style>
+
+
+
+<body  style=" background-color:#39F;" >
+
+
+<!--九宫格面板div-->
+
+<div id="Pic_All" style="width:540px; height:540px; border-style:solid; border-color:#000; left:120px; top:20px; ">
+
+
+<div id="pic0" onclick="movePic('pic0')" style="background-image:url(images/Dreamer/0.jpg); width:180px; height:180px; float:left; left:0px; top:0px; z-index:2;">
+</div>
+
+<div id="pic1" onclick="movePic('pic1')" style="background-image:url(images/Dreamer/1.jpg); width:180px; height:180px; float:left; left:180px; top:0px;">
+</div>
+
+<div id="pic2" onclick="movePic('pic2')" style="background-image:url(images/Dreamer/2.jpg); width:180px; height:180px; float:left; left:360px; top:0px;">
+</div>
+
+<div id="pic3" onclick="movePic('pic3')" style="background-image:url(images/Dreamer/3.jpg); width:180px; height:180px; float:left; left:0px; top:180px; ">
+</div>
+
+<div id="pic4" onclick="movePic('pic4')" style="background-image:url(images/Dreamer/4.jpg); width:180px; height:180px; float:left; left:180px; top:180px;">
+</div>
+
+<div id="pic5" onclick="movePic('pic5')" style="background-image:url(images/Dreamer/5.jpg); width:180px; height:180px; float:left; left:360px; top:180px;">
+</div>
+
+<div id="pic6" onclick="movePic('pic6')" style="background-image:url(images/Dreamer/6.jpg); width:180px; height:180px; float:left; left:0px; top:360px;">
+</div>
+
+<div id="pic7" onclick="movePic('pic7')" style="background-image:url(images/Dreamer/7.jpg); width:180px; height:180px; float:left; left:180px; top:360px;">
+</div>
+
+<div id="pic_08" onclick="movePic('pic_08')" style="background-image:url(images/Dreamer/8.jpg); width:180px; height:180px; float:left; top:100px; left:100px; position:absolute; left:360px; top:360px;">
+</div>
+
+</div>
+
+</div>
+<div id="" style="position:absolute; top:220px; left:980px; background-image:url(images/Dreamer/all_small.jpg); width:280px; height:280px; border:solid;">
+
+</div>
+
+
+<span style=" color:#FFF; font-size:56px; font-weight:220; position:absolute; left:750px; top:60px;">---Dreamer---</span>
+<span id="startGame" onmouseover="larger()" onmouseout="smaller()" onclick="chuShiHua()" style=" color:#FFF; font-size:30px;  font-weight:200; position:absolute; left:720px; top:240px;"><|Start Game|></span>
+
+<span id=""  style=" color:#FFF; font-size:26px;; font-weight:300; position:absolute; left:720px; top:320px;">Final Result</span>
+
+<span id="useTime"  style=" color:#FFF; font-size:24px; ; font-weight:100; position:absolute; left:720px; top:400px;">time：</span>
+
+<span id="moveStep"  style=" color:#FFF; font-size:24px; ; font-weight:100; position:absolute; left:720px; top:450px;">step：</span>
+
+<span id="extend"  style=" display:none; color:#FFF; font-size:18px ; font-weight:100; position:absolute; left:690px; top:520px;">同学，不错不错哦，可以再快些哦~~~</span>
+
+<bgsound  id="backgroundMusic" src="sounds/Dreamer.mp3" volume="-10000" loop="-1"  />
+<bgsound  id="buttonMusic" src="" volume="-800" loop="1"  />
+
+<script>
+var getNum=new Array();
+var rightPic=new Array();
+var minute=0;
+var time=0;
+var second=0;
+var step=0;
+rightPic[0]=[0,0,false];
+rightPic[1]=[180,0,false];
+rightPic[2]=[360,0,false];
+rightPic[3]=[0,180,false];
+rightPic[4]=[180,180,false];
+rightPic[5]=[360,180,false];
+rightPic[6]=[0,360,false];
+rightPic[7]=[180,360,false];
+var rightNum=0;
+var pic_08X=0;
+var pic_08Y=0;
+var idName0;
+var uniqueLock=false;
+var TimeInterval;
+
+function playMusic(){
+	document.getElementById("backgroundMusic").setAttribute("volume","-780");
+	}
+	
+function playButton(){
+	document.getElementById("buttonMusic").setAttribute("src","sounds/ButtonSound.wav");
+	}	
+	
+
+
+function larger(){
+	document.getElementById("startGame").style.fontSize="38px";
+	document.getElementById("startGame").style.left="705px";
+	}
+	
+function smaller(){
+	document.getElementById("startGame").style.fontSize="30px";
+	document.getElementById("startGame").style.left="720px";
+	}
+
+function getRightNum(){
+	
+	for(var i=0;i<8;i++){
+	var divPic=document.getElementById("pic"+i).style.backgroundImage;
+	var objectX=parseInt(document.getElementById("pic"+i).style.left);
+	var objectY=parseInt(document.getElementById("pic"+i).style.top);
+	var charNum=parseInt(divPic.charAt(20));
+
+	if(rightPic[charNum][0]==objectX&&rightPic[charNum][1]==objectY){
+		rightPic[charNum][2]=true;
+		rightNum++;
+	}else{
+		
+		}
+	
+    }
+}
+<!--产生9宫格随机数：一定有解的情况是：逆序和为偶数-->
+function getRandomPic(){
+     var rNum=new Array();
+	 
+	 var temp=0;
+	 rNum[0]=0;
+	 rNum[1]=1;
+	 rNum[2]=2;
+	 rNum[3]=3;
+	 rNum[4]=4;
+	 rNum[5]=5;
+	 rNum[6]=6;
+	 rNum[7]=7;
+	 for(var i=0;i<rNum.length;i++){ 
+	 
+	 var num=parseInt(Math.random()*(8-i));
+	 for(var j=0;j<rNum.length;j++){
+		 if(j==num){
+			 	getNum[i]=rNum[j];
+				temp=rNum[7-i];
+				rNum[7-i]=rNum[j];
+				rNum[j]=temp;
+				continue;
+			 }
+		 }
+	 
+	 }
+	 for(var i=0;i<getNum.length;i++){
+
+		}
+	 var niXuHe=0;
+	 for(var i=1;i<getNum.length;i++){
+		   for(var j=0;j<i;j++){
+			   if(getNum[j]>getNum[i]){
+				   		niXuHe++;
+				   }
+			   }
+		}
+
+	if(niXuHe%2==1){
+			var t=getNum[1];
+			getNum[1]=getNum[0];
+			getNum[0]=t;
+		}
+		niXuHe=0;	
+	for(var i=1;i<getNum.length;i++){
+		   for(var j=0;j<i;j++){
+			   if(getNum[j]>getNum[i]){
+				   		niXuHe++;
+				   }
+			   }
+		}
+
+
+	}
+	
+function putPicture(){
+	
+<!--	var panelPic = document.getElementById("Pic_All");
+<!--	var pics=panelPic.childNodes;
+<!--	alert("getNum[]个数："+pics.length);
+<!--	for(var i=0;i<pics.length;i++){
+		
+<!--		pics.item(i).style.backgroundImage="url(images/Dreamer/"+getNum[i]+".jpg)";
+<!--		}
+	document.getElementById("pic0").style.backgroundImage="url(images/Dreamer/"+getNum[0]+".jpg)";
+	document.getElementById("pic1").style.backgroundImage="url(images/Dreamer/"+getNum[1]+".jpg)";
+	document.getElementById("pic2").style.backgroundImage="url(images/Dreamer/"+getNum[2]+".jpg)";
+	document.getElementById("pic3").style.backgroundImage="url(images/Dreamer/"+getNum[3]+".jpg)";
+	document.getElementById("pic4").style.backgroundImage="url(images/Dreamer/"+getNum[4]+".jpg)";
+	document.getElementById("pic5").style.backgroundImage="url(images/Dreamer/"+getNum[5]+".jpg)";
+	document.getElementById("pic6").style.backgroundImage="url(images/Dreamer/"+getNum[6]+".jpg)";
+	document.getElementById("pic7").style.backgroundImage="url(images/Dreamer/"+getNum[7]+".jpg)";
+	document.getElementById("pic_08").style.backgroundImage="";
+	
+		
+}
+
+function getPic_08Position(){
+	var pic_08=document.getElementById("pic_08");
+	pic_08X=parseInt(pic_08.style.left);
+	pic_08Y=parseInt(pic_08.style.top);
+
+
+	
+	
+	}
+
+function toUp(idName){
+	
+		var object=document.getElementById(idName0);
+		
+		if(parseInt(object.style.top)>pic_08Y){
+		object.style.top=(parseInt(object.style.top)-20)+"px";
+	
+
+		}else{
+			uniqueLock=true;
+				window.clearInterval(TimeInterval);
+				getPic_08Position();
+		}
+	
+}
+
+function toDown(idName){
+
+			var object=document.getElementById(idName0);
+
+		if(parseInt(object.style.top)<pic_08Y){
+		object.style.top=(parseInt(object.style.top)+20)+"px";
+
+
+		}else{
+			uniqueLock=true;
+				window.clearInterval(TimeInterval);
+				getPic_08Position();
+		}
+	
+}
+
+function toRight(){
+	
+	
+		var object=document.getElementById(idName0);
+
+		if(parseInt(object.style.left)<pic_08X){
+		object.style.left=(parseInt(object.style.left)+20)+"px";
+
+
+		}else{
+			uniqueLock=true;
+				window.clearInterval(TimeInterval);
+				getPic_08Position();
+		}
+}
+
+function toLeft(idName){
+	
+			var object=document.getElementById(idName0);
+
+		if(parseInt(object.style.left)>pic_08X){
+		object.style.left=(parseInt(object.style.left)-20)+"px";
+
+
+		}else{
+				window.clearInterval(TimeInterval);
+				uniqueLock=true;
+				getPic_08Position();
+		}
+	
+}
+
+
+function movePic(idName){
+
+	if(uniqueLock==true){
+
+	var objectX=parseInt(document.getElementById(idName).style.left);
+	var objectY=parseInt(document.getElementById(idName).style.top);
+	var pic_08=document.getElementById("pic_08");
+	pic_08X=parseInt(pic_08.style.left);
+	pic_08Y=parseInt(pic_08.style.top);
+
+if(objectY==pic_08Y){
+		
+	if(objectX+180==pic_08X){
+	uniqueLock=false;
+	idName0=idName;
+		showTime();
+	playButton();
+	TimeInterval=window.setInterval("toRight()","15");
+	step++;
+	var pic8=document.getElementById("pic_08");
+
+	pic8.style.left=objectX+"px";
+	pic8.style.top=objectY+"px";
+	var divPic=document.getElementById(idName).style.backgroundImage;
+	var charNum=parseInt(divPic.charAt(20));
+
+	if(rightPic[charNum][0]==objectX+180&&rightPic[charNum][1]==objectY){
+		rightPic[charNum][2]=true;
+		rightNum++;
+	}else if((rightPic[charNum][0]!=objectX+180||rightPic[charNum][1]!=objectY)&&rightPic[charNum][2]==true){
+		rightPic[charNum][2]=false;
+		rightNum--;
+		}
+	if(rightNum==8){
+		end();		
+	}
+
+	
+			
+	}else if(objectX-180==pic_08X){
+	uniqueLock=false;	
+	idName0=idName;
+		showTime();
+	playButton();
+	TimeInterval=window.setInterval("toLeft()","15");
+		step++;
+	var pic8=document.getElementById("pic_08");
+
+	pic8.style.left=objectX+"px";
+	pic8.style.top=objectY+"px";
+	
+	var divPic=document.getElementById(idName).style.backgroundImage;
+	var charNum=parseInt(divPic.charAt(20));
+
+	if(rightPic[charNum][0]==objectX-180&&rightPic[charNum][1]==objectY){
+		rightPic[charNum][2]=true;
+		rightNum++;
+	}else if((rightPic[charNum][0]!=objectX-180||rightPic[charNum][1]!=objectY)&&rightPic[charNum][2]==true){
+		rightPic[charNum][2]=false;
+		rightNum--;
+		}
+	if(rightNum==8){
+		end();		
+	}
+
+	}
+		
+
+	
+	
+}else if(objectX==pic_08X){
+	
+	if(objectY-180==pic_08Y){
+		uniqueLock=false;
+	idName0=idName;
+		showTime();
+	playButton();
+	TimeInterval=window.setInterval("toUp()","15");
+		step++;
+	var pic8=document.getElementById("pic_08");
+
+	pic8.style.left=objectX+"px";
+	pic8.style.top=objectY+"px";
+	
+	var divPic=document.getElementById(idName).style.backgroundImage;
+	var charNum=parseInt(divPic.charAt(20));
+
+	if(rightPic[charNum][0]==objectX&&rightPic[charNum][1]==objectY-180){
+		rightPic[charNum][2]=true;
+		rightNum++;
+	}else if((rightPic[charNum][0]!=objectX||rightPic[charNum][1]!=objectY-180)&&rightPic[charNum][2]==true){
+		rightPic[charNum][2]=false;
+		rightNum--;
+		}
+	if(rightNum==8){
+		end();	
+	}
+
+	
+	}else if(objectY+180==pic_08Y){
+		uniqueLock=false;
+	idName0=idName;
+	showTime();
+	playButton();
+	TimeInterval=window.setInterval("toDown()","15");
+		step++;
+	var pic8=document.getElementById("pic_08");
+
+	pic8.style.left=objectX+"px";
+	pic8.style.top=objectY+"px";	
+	var divPic=document.getElementById(idName).style.backgroundImage;
+	var charNum=parseInt(divPic.charAt(20));
+
+	if(rightPic[charNum][0]==objectX&&rightPic[charNum][1]==objectY+180){
+		rightPic[charNum][2]=true;
+		rightNum++;
+	}else if((rightPic[charNum][0]!=objectX||rightPic[charNum][1]!=objectY+180)&&rightPic[charNum][2]==true){
+		rightPic[charNum][2]=false;
+		rightNum--;
+		}
+	if(rightNum==8){
+		end();		
+	}
+		}
+ 	 }
+  	}
+}
+
+function showTime(){
+	var t=document.getElementById("useTime");
+	var m=document.getElementById("moveStep");
+	var d=new Date();
+	time=d.getMinutes()*60+d.getSeconds()-minute*60-second;
+	t.innerHTML="time："+time;
+	m.innerHTML="step："+step;
+	}
+
+function end(){
+	
+	var t=document.getElementById("useTime");
+	var m=document.getElementById("moveStep");
+	var d=new Date();
+	time=d.getMinutes()*60+d.getSeconds()-minute*60-second;
+	t.innerHTML="time："+time;
+	m.innerHTML="step："+step;
+	document.getElementById("pic_08").style.backgroundImage="url(images/Dreamer/8.jpg)";
+	uniqueLock=false;
+	var extend=document.getElementById("extend");
+	if(time<=30){
+		extend.innerHTML="同学，太强大了，突破30s的都是鬼畜~~~游戏制作者鱼皮同学,向你致敬！哈哈";
+
+		extend.style.display="block";
+	}else if(time<=40){
+		extend.innerHTML="同学，很厉害啊！突破30s看到终极内容，加油~~~";
+		extend.style.display="block";
+	}else if(time<=60){
+		extend.innerHTML="同学，不错不错哦！再接再厉！突破40s看到不同内容哦~~~";
+		extend.style.display="block";
+	}else if(time<=80){
+		extend.innerHTML="同学，恭喜你完成游戏！智商完爆一切！突破60s看到不同内容哦~~~";
+		extend.style.display="block";
+	}else if(time<=120){
+		extend.innerHTML="同学，顺利通关！屌丝逆袭！突破80s看到不同内容哦~~~";
+		extend.style.display="block";
+	}else if(time<=160){
+		extend.innerHTML="同学，通关啦！但是有点慢，突破120s看到不同内容哦~~~";
+		extend.style.display="block";
+	}else if(tiem<=200){
+		extend.innerHTML="同学，通过本游戏！你可以再快些的！突破160s看到不同内容哦~~~";
+		extend.style.display="block";
+	}else if(time<=300){
+		extend.innerHTML="同学，完成游戏！加油！突破200s看到不同内容哦~~~";
+		extend.style.display="block";
+	}else{
+		extend.innerHTML="同学，通关了~虽然就一关，嘿嘿！突破300s看到不同内容哦~~~";
+		extend.style.display="block";
+	}
+		
+}
+
+function chuShiHua(){
+
+playMusic();
+getRandomPic();
+putPicture();
+getPic_08Position();
+getRightNum();
+step=0;
+uniqueLock=true;
+var d=new Date();
+document.getElementById("pic_08").style.backgroundImage="";
+second=	d.getSeconds();
+minute=d.getMinutes();
+	var t=document.getElementById("useTime");
+	var m=document.getElementById("moveStep");
+	t.innerHTML="time：";
+	m.innerHTML="step：";
+
+	}
+	
+
+
+</script>
+
+
+</body>
+</html>
